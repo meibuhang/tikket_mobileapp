@@ -8,6 +8,7 @@ import Card from "./component/Card";
 import Detail from "./screen/Detail";
 import AddEvent from "./screen/AddEvent";
 import Profile from "./screen/Profile";
+import Category from "./screen/CategoryScreen";
 const AppStackNavigator = createStackNavigator(
   {
     Welcome: { screen: WelcomeScreen },
@@ -15,7 +16,8 @@ const AppStackNavigator = createStackNavigator(
     Card: { screen: Card },
     DetailScreen: { screen: Detail },
     AddEvent: { screen: AddEvent },
-    Profile: { screen: Profile }
+    Profile: { screen: Profile },
+    CategoryScreen: { screen: Category }
   },
   { headerMode: "none" }
 );

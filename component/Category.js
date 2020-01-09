@@ -47,7 +47,7 @@ export default class ListCategory extends Component {
               style={styles.scrollBtn}
               light
               onPress={() =>
-                this.props.navigation.navigate("Profile", {
+                this.props.navigation.navigate("CategoryScreen", {
                   categoryId: item.id,
                   categoryName: item.name
                 })
