@@ -16,7 +16,7 @@ export default class Home extends Component {
       <Container>
         <Nav />
         <Content>
-          <Category />
+          <Category navigation={this.props.navigation} />
           <ScrollView style={styles.cards}>
             <Card navigation={this.props.navigation} />
           </ScrollView>

@@ -1,115 +1,99 @@
 import React, { Component } from "react";
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import {
   Card,
   CardItem,
   Thumbnail,
   Text,
   Button,
-  Icon,
   Left,
   Body,
   Right,
   View
 } from "native-base";
-
+import Icon from "react-native-vector-icons/FontAwesome";
+import axios from "axios";
 export default class Event extends Component {
   static navigationOptions = {
     headerShown: false
   };
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: []
+    };
+  }
+
+  componentDidMount() {
+    axios
+      .get(`http://192.168.1.7:4500/api/dumbticket/event/allevent`)
+      .then(res => {
+        const event = res.data;
+        this.setState({ data: event });
+        //  console.log(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
   render() {
     return (
       //   <Container>
       //     <Content>
-      <View>
-        <Card>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("DetailScreen")}
-          >
-            <CardItem style={styles.Bgcards}>
-              <Left>
-                <Thumbnail
-                  source={{
-                    uri:
-                      "https://i.pinimg.com/236x/e5/d0/ce/e5d0ce99bf43f5c0ab8127dc8fea858e.jpg"
-                  }}
-                />
-                <Body>
-                  <Text style={styles.text2}>Amazon REMARS Goes To Palu</Text>
 
-                  <Text note style={styles.textNote}>
-                    July.id
-                  </Text>
-                </Body>
-              </Left>
-            </CardItem>
-            <CardItem cardBody>
-              <Image
-                source={{
-                  uri:
-                    "https://remars.amazon.com/media/highlights/Jeff-Bezos-Fireside-Chat-Still-lg.jpg"
-                }}
-                style={{ height: 200, width: null, flex: 1 }}
-              />
-            </CardItem>
-            <CardItem style={styles.Bgcards}>
-              <Left>
-                <Button transparent>
-                  <Icon name="heart" style={styles.iconLove} />
-                  <Text style={styles.textLikes}>12 Likes</Text>
-                </Button>
-              </Left>
-              <Right>
-                <Button style={styles.btnBook}>
-                  <Text style={styles.text1}>Rp 150.000</Text>
-                </Button>
-              </Right>
-            </CardItem>
-          </TouchableOpacity>
-        </Card>
+      <FlatList
+        data={this.state.data.event}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View>
+            <Card>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate("DetailScreen")}
+              >
+                <CardItem style={styles.Bgcards}>
+                  <Left>
+                    <Thumbnail
+                      source={{
+                        uri: item.user.image
+                      }}
+                    />
+                    <Body>
+                      <Text style={styles.text2}>{item.name}</Text>
 
-        {/* section 2 */}
-        <Card>
-          <CardItem style={styles.Bgcards}>
-            <Left>
-              <Thumbnail
-                source={{
-                  uri:
-                    "https://i.pinimg.com/236x/e5/d0/ce/e5d0ce99bf43f5c0ab8127dc8fea858e.jpg"
-                }}
-              />
-              <Body>
-                <Text style={styles.text2}>Harry Potter</Text>
-                <Text note style={styles.textNote}>
-                  July.id
-                </Text>
-              </Body>
-            </Left>
-          </CardItem>
-          <CardItem cardBody>
-            <Image
-              source={{
-                uri: "https://wallpaperplay.com/walls/full/0/0/9/64773.jpg"
-              }}
-              style={{ height: 200, width: null, flex: 1 }}
-            />
-          </CardItem>
-          <CardItem style={styles.Bgcards}>
-            <Left>
-              <Button transparent>
-                <Icon name="heart" style={styles.iconLove} />
-                <Text style={styles.textLikes}>25 Likes</Text>
-              </Button>
-            </Left>
-            <Right>
-              <Button style={styles.btnBook}>
-                <Text style={styles.text1}>Rp 70.000</Text>
-              </Button>
-            </Right>
-          </CardItem>
-        </Card>
-      </View>
+                      <Text note style={styles.textNote}>
+                        {item.user.fullname}
+                      </Text>
+                    </Body>
+                  </Left>
+                </CardItem>
+                <CardItem cardBody>
+                  <Image
+                    source={{
+                      uri: item.image
+                    }}
+                    style={{ height: 200, width: null, flex: 1 }}
+                  />
+                </CardItem>
+                <CardItem style={styles.Bgcards}>
+                  <Left>
+                    <Button transparent>
+                      <Icon name="calendar" style={styles.iconDate} />
+                      <Text style={styles.textLikes}> {item.start_date}</Text>
+                    </Button>
+                  </Left>
+                  <Right>
+                    <Button style={styles.btnBook}>
+                      <Text style={styles.text1}> Rp &nbsp;{item.price}</Text>
+                    </Button>
+                  </Right>
+                </CardItem>
+              </TouchableOpacity>
+            </Card>
 
+            {/* section 2 */}
+          </View>
+        )}
+      />
       //section2
     );
   }
@@ -133,9 +117,9 @@ const styles = StyleSheet.create({
   textLikes: {
     color: "#757575"
   },
-  iconLove: {
+  iconDate: {
     color: "#700000",
-    fontSize: 35
+    fontSize: 20
   },
   btnBook: {
     width: 150,
