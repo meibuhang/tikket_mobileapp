@@ -11,87 +11,108 @@ import {
   Right,
   Container,
   Content,
-  View
+  View,
+  Item
 } from "native-base";
 import Nav from "../component/Header";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Footer from "../component/Footer";
+import axios from "axios";
+function getDayOfWeek(date) {
+  let dayOfWeek = new Date(date).getDay();
+  return isNaN(dayOfWeek)
+    ? null
+    : [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ][dayOfWeek];
+}
 export default class Event extends Component {
   static navigationOptions = {
     headerShown: false
   };
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: []
+    };
+  }
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    const eventId = navigation.getParam("eventId");
+
+    axios
+      .get(`http://192.168.1.7:4500/api/dumbticket/category/event/${eventId}`)
+      .then(res => {
+        const event = res.data;
+        this.setState({ data: event });
+        //  console.log(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
   render() {
+    const datas = this.state.data;
     return (
       <Container>
         <Nav />
         <Content>
           <Card>
-            <TouchableOpacity
-              onPress={() => this.props.navigation.navigate("DetailScreen")}
-            >
-              <CardItem>
-                <Left>
-                  <Thumbnail
-                    source={{
-                      uri:
-                        "https://i.pinimg.com/236x/e5/d0/ce/e5d0ce99bf43f5c0ab8127dc8fea858e.jpg"
-                    }}
-                  />
-                  <Body>
-                    <Text style={styles.text1}>Amazon REMARS Goes To Palu</Text>
-
-                    <Text note style={styles.textNote}>
-                      July.id
-                    </Text>
-                  </Body>
-                </Left>
-              </CardItem>
-              <CardItem cardBody>
-                <Image
+            <CardItem>
+              <Left>
+                <Thumbnail
                   source={{
-                    uri:
-                      "https://remars.amazon.com/media/highlights/Jeff-Bezos-Fireside-Chat-Still-lg.jpg"
+                    uri: datas.user ? datas.user.image : ""
                   }}
-                  style={{ height: 200, width: null, flex: 1 }}
                 />
-              </CardItem>
-              <CardItem>
-                <Left style={styles.leftSide}>
-                  <View style={{ flexDirection: "row" }}>
-                    <Icon name="calendar" style={styles.date} />
-                    <Text style={styles.textIcon}>Friday, 2020- 01 - 10</Text>
-                  </View>
-                  <View style={{ flexDirection: "row", paddingTop: 10 }}>
-                    <Icon name="map-marker" style={styles.date} />
-                    <Text style={styles.textIcon}> Jl Kihajar Dewantoro</Text>
-                  </View>
-                </Left>
-                <Right>
-                  <Text style={styles.textPrice}>( Rp 150.000 )</Text>
+                <Body>
+                  <Text style={styles.text1}>{this.state.data.name}</Text>
 
-                  <Button style={styles.btnBook}>
-                    <Text style={styles.textBook}>BOOK</Text>
-                  </Button>
-                </Right>
-              </CardItem>
-            </TouchableOpacity>
+                  <Text note style={styles.textNote}>
+                    {datas.user ? datas.user.fullname : ""}
+                  </Text>
+                </Body>
+              </Left>
+            </CardItem>
+            <CardItem cardBody>
+              <Image
+                source={{
+                  uri: this.state.data.image
+                }}
+                style={{ height: 200, width: null, flex: 1 }}
+              />
+            </CardItem>
+            <CardItem>
+              <Left style={styles.leftSide}>
+                <View style={{ flexDirection: "row" }}>
+                  <Icon name="calendar" style={styles.date} />
+                  <Text style={styles.textIcon}>
+                    {getDayOfWeek(datas.start_date)} , {datas.start_date}
+                  </Text>
+                </View>
+                <View style={{ flexDirection: "row", paddingTop: 10 }}>
+                  <Icon name="map-marker" style={styles.date} />
+                  <Text style={styles.textIcon}>At {datas.location}</Text>
+                </View>
+              </Left>
+              <Right>
+                <Text style={styles.textPrice}>(Rp {datas.price} )</Text>
+
+                <Button style={styles.btnBook}>
+                  <Text style={styles.textBook}>BOOK</Text>
+                </Button>
+              </Right>
+            </CardItem>
+
             <CardItem style={{ flex: 1 }}>
-              <Text style={styles.textContent}>
-                re:MARS is an AI event covering a diverse array of topics and
-                themes related to Machine Learning, Automation, Robotics, and
-                Space. The first year of re:MARS brought together thousands of
-                business leaders and technical builders from more than 40
-                countries for a truly unique event experience featuring speakers
-                like Jeff Bezos, Robert Downey Jr., Andrew Ng, Kate Darling, and
-                Marc Raibert, 100+ learning sessions, pioneering robotics demos
-                that included a Mars rover, haptic robotic hands, and
-                open-source prosthetic leg, workshops, and more. At re:MARS
-                2020, attendees can once again expect to be inspired by industry
-                luminaries, learn best practices on AI and ML applications for
-                their organization, meet with Amazon technology experts, and
-                immerse themselves in the latest emerging AI technology at the
-                re:MARS Tech Showcase.
-              </Text>
+              <Text style={styles.textContent}>{datas.detail_event}</Text>
             </CardItem>
           </Card>
         </Content>
@@ -140,6 +161,7 @@ const styles = StyleSheet.create({
     color: "#700000",
     fontWeight: "bold",
     marginLeft: 20,
-    paddingBottom: 10
+    paddingBottom: 10,
+    textAlign: "center"
   }
 });

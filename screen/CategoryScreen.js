@@ -61,7 +61,11 @@ export default class CategoryScreen extends Component {
         <Nav />
         <Content>
           <ScrollView style={styles.cards}>
-            <Text style={styles.text2}>Event : {categoryName}</Text>
+            <View>
+              <Button style={styles.scrollBtn} light>
+                <Text style={styles.textEvent}>{categoryName}</Text>
+              </Button>
+            </View>
             <FlatList
               data={this.state.data.category}
               showsVerticalScrollIndicator={false}
@@ -70,7 +74,10 @@ export default class CategoryScreen extends Component {
                   <Card>
                     <TouchableOpacity
                       onPress={() =>
-                        this.props.navigation.navigate("DetailScreen")
+                        this.props.navigation.navigate("DetailScreen", {
+                          eventId: item.id,
+                          eventName: item.name
+                        })
                       }
                     >
                       <CardItem style={styles.Bgcards}>
@@ -161,5 +168,24 @@ const styles = StyleSheet.create({
     width: 150,
     backgroundColor: "#700000",
     justifyContent: "center"
+  },
+  textEvent: {
+    fontSize: 10,
+    color: "#ffffff",
+    fontWeight: "bold",
+
+    textAlign: "center"
+  },
+  scrollBtn: {
+    backgroundColor: "#700000",
+
+    borderRadius: 50,
+    marginRight: 10,
+    marginLeft: 10,
+    marginTop: 10,
+    marginBottom: 20,
+    width: "30%",
+    justifyContent: "center",
+    alignItems: "center"
   }
 });

@@ -48,7 +48,14 @@ export default class Event extends Component {
           <View>
             <Card>
               <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("DetailScreen")}
+                onPress={() =>
+                  this.props.navigation.navigate("DetailScreen", {
+                    eventId: item.id,
+                    eventName: item.name
+                    // userName: item.user.name,
+                    // userImage: item.user.image
+                  })
+                }
               >
                 <CardItem style={styles.Bgcards}>
                   <Left>
